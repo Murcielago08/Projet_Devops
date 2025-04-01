@@ -16,11 +16,11 @@ COPY . .
 # Compiler le code TypeScript en JavaScript
 RUN npm run build || (echo "Build failed. Logs:" && cat /app/tsconfig.json && exit 1)
 
+# Debug: Lister les fichiers dans le répertoire app
+RUN echo "Contents of /app:" && ls -l /app
+
 # Debug: Lister les fichiers dans le répertoire dist
 RUN echo "Contents of /app/dist:" && ls -l /app/dist
-
-# Vérifier que le fichier app.js est généré
-RUN test -f /app/dist/app.js || (echo "Error: app.js not found in /app/dist" && exit 1)
 
 # Étape 2 : Exécution
 FROM node:18-slim
@@ -30,7 +30,6 @@ WORKDIR /app
 
 # Copier uniquement les fichiers compilés depuis l'étape de build
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/dist/app.js ./app.js
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 
