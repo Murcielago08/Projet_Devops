@@ -6,12 +6,13 @@ Ce TP est une API simple qui renvoie les en-têtes de la requête au format JSON
 ## Prérequis
 - Node.js
 - npm (Gestionnaire de paquets Node)
+- Docker (pour exécuter avec conteneurs)
 
 ## Installation
 1. Clonez le dépôt :
    ```sh
    git clone <repository-url>
-   cd <repository-directory>
+   cd <repository-directory>/Projet_Devops
    ```
 
 2. Installez les dépendances :
@@ -20,6 +21,55 @@ Ce TP est une API simple qui renvoie les en-têtes de la requête au format JSON
    ```
 
 ## Exécution du TP
+
+### Avec Docker
+
+1. Construisez l'image Docker :
+   ```sh
+   docker build -t tp-devops:latest -f single_stage.dockerfile .
+   ```
+
+2. Lancez un conteneur Docker :
+   ```sh
+   docker run -d -p 3000:5000 --name tp-devops tp-devops:latest
+   ```
+
+   - Le serveur sera accessible sur `http://localhost:3000`.
+   - Si vous souhaitez utiliser un port différent, utilisez l'option `-p` pour mapper un autre port local au port 5000 du conteneur :
+     ```sh
+     docker run -d -p 4000:5000 --name tp-devops tp-devops:latest
+     ```
+
+3. Arrêtez et supprimez le conteneur :
+   ```sh
+   docker stop tp-devops
+   docker rm tp-devops
+   ```
+
+### Vérification des vulnérabilités dans l'image Docker
+
+1. Installez `docker scan` si ce n'est pas déjà fait (inclus dans Docker Desktop ou disponible via CLI).
+2. Scannez l'image Docker pour détecter les vulnérabilités :
+   ```sh
+   docker scan tp-devops:latest
+   ```
+
+   Cela affichera un rapport des vulnérabilités connues dans l'image.
+
+3. Pour un scan plus détaillé, vous pouvez utiliser des outils comme [Trivy](https://github.com/aquasecurity/trivy) :
+   ```sh
+   trivy image tp-devops:latest
+   ```
+
+   ou
+
+   ```sh
+   trivy image --scanners vuln tp-devops:latest
+   ```
+
+   Installez Trivy si nécessaire en suivant les instructions sur leur site officiel.
+
+### Sans Docker
 1. Définissez la variable d'environnement `PING_LISTEN_PORT` (optionnel) :
    ```sh
    export PING_LISTEN_PORT=4000
